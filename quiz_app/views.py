@@ -1,3 +1,6 @@
 from django.shortcuts import render
 
+def cover(request):
+    return render(request, "cover.html")
+
 # Create your views here.
