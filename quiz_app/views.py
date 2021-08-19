@@ -1,10 +1,59 @@
+from django.core.checks import messages
 from django.shortcuts import redirect, render
+import bcrypt
+from django.contrib import messages
 from .models import *
 
 
 
 def cover(request):
     return render(request, "cover.html")
+
+def logreg(request):
+    return render(request, 'register.html')
+
+def register(request):
+    errors = User.objects.reg_val(request.POST)
+    if errors:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect('/logreg')
+    else:
+        password = request.POST['password']
+        pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+        print(pw_hash)
+        user = User.objects.create(first_name = request.POST['first_name'],
+        last_name = request.POST['last_name'],
+        email = request.POST['email'],
+        password = pw_hash,)
+        messages.success(request, "Registration successful!")
+        request.session['id'] = user.id
+        request.session['score'] = 0
+        request.session['wrong'] = 0
+        request.session['correct'] = 0
+        request.session['total'] = 0
+        request.session['percent'] = 0
+    return redirect(f'start_lite/{user.id}')
+
+def kid_login(request):
+    if request.method == 'GET':
+        return redirect('/')
+    errors = User.objects.log_val(request.POST)
+    if errors:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect('/logreg')
+    else:
+        user = User.objects.get(email = request.POST['email'])
+        request.session['id'] = user.id
+        return redirect(f'start_lite/{user.id}')
+
+def start_lite(request, user_id):
+    context = {
+        'user': User.objects.get(id = user_id),
+        'querys': Query.objects.all()
+    }
+    return render(request, "quizlite.html", context)
 
 def addQuestion(request):
     if request.user.is_staff:
@@ -17,33 +66,33 @@ def addQuestion(request):
             ans = request.POST['op1']
     pass
 
-def register(request):
-    pass
-
-def kid_login(request):
-    pass
-
 def adult_login(request):
     pass
 
-def quiz_lite(request):
+def process_quiz(request):
     if request.method == 'POST':
         querys = Query.objects.all()
-        request.session['score'] = 0
-        request.session['wrong'] = 0
-        request.session['correct'] = 0
-        request.session['total'] = 0
+        score = request.session['score']
+        wrong = request.session['wrong']
+        correct = request.session['correct']
+        total = request.session['total']
+        percent = request.session['percent']
         for q in querys:
-            request.session['total']+=1
+            total+=1
             print(request.POST.get(q.query))
             print(q.ans)
             print()
             if q.ans == request.POST.get(q.question):
-                request.session['score']+=10
-                request.session['correct']+=1
+                score+=10
+                correct+=1
             else:
-                request.session['wrong']+=1
-        request.session['percent'] = request.session['score'] / (request.session['total'] * 10) * 100
+                wrong+=1
+        percent = score / (total * 10) * 100
+        request.session['percent'] = percent
+        request.session['total'] = total
+        request.session['correct'] = correct
+        request.session['wrong'] = wrong
+        request.session['score'] = score
         return redirect('/results')
     else:
         querys = Query.objects.all()
@@ -51,16 +100,16 @@ def quiz_lite(request):
             'questions': querys
         }
         return render(request, 'quizlite.html', context)
-    pass
 
 def results(request):
     context = {
-            'score': request.session['score'],
-            'time': request.POST.get('timer'),
-            'correct': request.session['correct'],
-            'wrong': request.session['wrong'],
-            'percent': request.session['percent'],
-            'total': request.session['total']
+        'user': User.objects.get(id = request.session['id']),
+        'score': request.session['score'],
+        'time': request.POST.get('timer'),
+        'correct': request.session['correct'],
+        'wrong': request.session['wrong'],
+        'percent': request.session['percent'],
+        'total': request.session['total']
         }
     return render(request, 'result.html', context)
 
