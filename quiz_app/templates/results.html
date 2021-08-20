@@ -10,15 +10,15 @@
 </head>
 <body>
     <h5 class="card-title">Score: {{score}}</h5> 
-    <p class="card-text">Percentage: {{percent}}%</p>
+    <p class="card-text">You did {{percent}}</p>
     <p class="card-text">Time Taken: {{time}} seconds</p>
     <p class="card-text">Correct answers: {{correct}}</p>
     <p class="card-text">Incorrect answers: {{wrong}}</p>
     <p class="card-text">Total questions: {{total}}</p>
 
-    {% if percent == 80% %}
-    <img src="url({% static 'img/mike_dunk.jpg' %})" alt="Michael Jordan Dunk">
-    {% elif percent == 100% %}
+    {% if percent == 'Really Well!' %}
+    <img src="{% static 'img/mike_dunk.jpg' %}" alt="Michael Jordan Dunk">
+    {% elif percent == 'Perfect!' %}
     <iframe width="560" height="315" src="https://www.youtube.com/embed/cDEJt-zv19A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     {% endif %}
     <h5>All the best for next quiz!</h5>

@@ -4,10 +4,10 @@ import re
 
 email_reg = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
-class UserManager(models.Manager):
+class KidUserManager(models.Manager):
     def reg_val(self, postData):
         errors = {}        
-        user_emails = User.objects.filter(email = postData['email'])
+        user_emails = KidUser.objects.filter(email = postData['email'])
         if len(postData['first_name']) == 0:
             errors['blank_first'] = "First name cannot be blank"
         if len(postData['first_name']) < 2:
@@ -32,7 +32,7 @@ class UserManager(models.Manager):
 
     def log_val(self, postData):
         errors = {}
-        user_emails = User.objects.filter(email = postData['email'])
+        user_emails = KidUser.objects.filter(email = postData['email'])
         if len(postData['email']) == 0:
             errors['blank_email'] = "Email is required"
         if not email_reg.match(postData['email']):
@@ -48,13 +48,20 @@ class UserManager(models.Manager):
         return errors
         
 
-class User(models.Model):
+class KidUser(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    age = models.BooleanField()
     email = models.EmailField(max_length=200)
     password = models.CharField(max_length=200)
-    objects = UserManager()
+    objects = KidUserManager()
+
+# class AdultUser(models.Model):
+#     first_name = models.CharField(max_length=100)
+#     last_name = models.CharField(max_length=100)
+#     age = models.BooleanField()
+#     email = models.EmailField(max_length=200)
+#     password = models.CharField(max_length=200)
+#     objects = AdultUserManager()
 
 class Query(models.Model):
     question = models.CharField(max_length=200, null=True)

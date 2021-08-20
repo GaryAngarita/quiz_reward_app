@@ -13,7 +13,7 @@ def logreg(request):
     return render(request, 'register.html')
 
 def register(request):
-    errors = User.objects.reg_val(request.POST)
+    errors = KidUser.objects.reg_val(request.POST)
     if errors:
         for key, value in errors.items():
             messages.error(request, value)
@@ -22,7 +22,7 @@ def register(request):
         password = request.POST['password']
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         print(pw_hash)
-        user = User.objects.create(first_name = request.POST['first_name'],
+        user = KidUser.objects.create(first_name = request.POST['first_name'],
         last_name = request.POST['last_name'],
         email = request.POST['email'],
         password = pw_hash,)
@@ -32,25 +32,25 @@ def register(request):
         request.session['wrong'] = 0
         request.session['correct'] = 0
         request.session['total'] = 0
-        request.session['percent'] = 0
+        request.session['percent'] = ''
     return redirect(f'start_lite/{user.id}')
 
 def kid_login(request):
     if request.method == 'GET':
         return redirect('/')
-    errors = User.objects.log_val(request.POST)
+    errors = KidUser.objects.log_val(request.POST)
     if errors:
         for key, value in errors.items():
             messages.error(request, value)
         return redirect('/logreg')
     else:
-        user = User.objects.get(email = request.POST['email'])
+        user = KidUser.objects.get(email = request.POST['email'])
         request.session['id'] = user.id
         return redirect(f'start_lite/{user.id}')
 
 def start_lite(request, user_id):
     context = {
-        'user': User.objects.get(id = user_id),
+        'user': KidUser.objects.get(id = user_id),
         'querys': Query.objects.all()
     }
     return render(request, "quizlite.html", context)
@@ -79,15 +79,18 @@ def process_quiz(request):
         percent = request.session['percent']
         for q in querys:
             total+=1
-            print(request.POST.get(q.query))
-            print(q.ans)
-            print()
+            print(q.question)
+            print(request.POST['ans'])
             if q.ans == request.POST.get(q.question):
                 score+=10
                 correct+=1
             else:
                 wrong+=1
         percent = score / (total * 10) * 100
+        if percent <= 100 or percent >= 90:
+            percent = 'Perfect!'
+        elif percent < 90 or percent >= 80:
+            percent = 'Really Well!'
         request.session['percent'] = percent
         request.session['total'] = total
         request.session['correct'] = correct
@@ -103,7 +106,7 @@ def process_quiz(request):
 
 def results(request):
     context = {
-        'user': User.objects.get(id = request.session['id']),
+        'user': KidUser.objects.get(id = request.session['id']),
         'score': request.session['score'],
         'time': request.POST.get('timer'),
         'correct': request.session['correct'],
@@ -111,7 +114,7 @@ def results(request):
         'percent': request.session['percent'],
         'total': request.session['total']
         }
-    return render(request, 'result.html', context)
+    return render(request, 'results.html', context)
 
 
 
