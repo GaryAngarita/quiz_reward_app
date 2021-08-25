@@ -53,15 +53,19 @@ class KidUser(models.Model):
     last_name = models.CharField(max_length=100)
     email = models.EmailField(max_length=200)
     password = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     objects = KidUserManager()
 
-# class AdultUser(models.Model):
-#     first_name = models.CharField(max_length=100)
-#     last_name = models.CharField(max_length=100)
-#     age = models.BooleanField()
-#     email = models.EmailField(max_length=200)
-#     password = models.CharField(max_length=200)
-#     objects = AdultUserManager()
+class AdultUser(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    age = models.BooleanField()
+    email = models.EmailField(max_length=200)
+    password = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    # objects = AdultUserManager()
 
 class Query(models.Model):
     question = models.CharField(max_length=200, null=True)

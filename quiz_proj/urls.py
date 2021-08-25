@@ -15,17 +15,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from quiz_app.models import KidUser as KU, Query
-
-class KUAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(KU, KUAdmin)
-# class AUAdmin(admin.ModelAdmin):
-#     pass
-# admin.site.register(AU, AUAdmin)
-class QueryAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Query, QueryAdmin)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

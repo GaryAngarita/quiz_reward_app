@@ -48,7 +48,7 @@
                 <br>
                 <br>
                 <h2>Register</h1>
-                <form action="/register" method="post" id="register">
+                <form action="/kid_register" method="post" id="register">
                     {% csrf_token %}
                     {% for message in messages %}
                         <p>{{ message }}</p>
@@ -92,7 +92,7 @@
                 <br>
                 <br>
                 <h2>Login</h2>
-                <form action="/login" method="post">
+                <form action="/kid_login" method="post">
                     {% csrf_token %}
                     <div class="row mb-3">
                         <label for="email" class="col-sm-2 col-form-label">Email</label>

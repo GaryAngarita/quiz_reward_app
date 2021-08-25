@@ -10,9 +10,9 @@ def cover(request):
     return render(request, "cover.html")
 
 def logreg(request):
-    return render(request, 'register.html')
+    return render(request, 'kid_register.html')
 
-def register(request):
+def kid_register(request):
     errors = KidUser.objects.reg_val(request.POST)
     if errors:
         for key, value in errors.items():
@@ -96,7 +96,7 @@ def process_quiz(request):
         request.session['correct'] = correct
         request.session['wrong'] = wrong
         request.session['score'] = score
-        return redirect('/results')
+        return redirect('/kid_results')
     else:
         querys = Query.objects.all()
         context = {
@@ -104,7 +104,7 @@ def process_quiz(request):
         }
         return render(request, 'quizlite.html', context)
 
-def results(request):
+def kid_results(request):
     context = {
         'user': KidUser.objects.get(id = request.session['id']),
         'score': request.session['score'],
