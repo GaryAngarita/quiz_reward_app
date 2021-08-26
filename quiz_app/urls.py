@@ -11,6 +11,6 @@ urlpatterns = [
     path('start_lite/<int:user_id>', views.start_lite),
     path('process_quiz', views.process_quiz),
     # path('quiz_heavy', views.quiz_heavy),
-    path('kid_results', views.results),
+    path('kid_results', views.kid_results),
     path('logout', views.logout)
 ]

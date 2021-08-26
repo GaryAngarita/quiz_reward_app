@@ -25,7 +25,7 @@ def kid_register(request):
         user = KidUser.objects.create(first_name = request.POST['first_name'],
         last_name = request.POST['last_name'],
         email = request.POST['email'],
-        password = pw_hash,)
+        password = pw_hash)
         messages.success(request, "Registration successful!")
         request.session['id'] = user.id
         request.session['score'] = 0
@@ -72,21 +72,21 @@ def adult_login(request):
 def process_quiz(request):
     if request.method == 'POST':
         querys = Query.objects.all()
-        score = request.session['score']
-        wrong = request.session['wrong']
-        correct = request.session['correct']
-        total = request.session['total']
-        percent = request.session['percent']
+        score=0
+        wrong=0
+        correct=0
+        total=0
         for q in querys:
             total+=1
-            print(q.question)
-            print(request.POST['ans'])
-            if q.ans == request.POST.get(q.question):
+            print(request.POST.get(q.question))
+            print(q.ans)
+            print()
+            if q.ans ==  request.POST.get(q.question):
                 score+=10
                 correct+=1
             else:
                 wrong+=1
-        percent = score / (total * 10) * 100
+        percent = score/(total*10) *100
         if percent <= 100 or percent >= 90:
             percent = 'Perfect!'
         elif percent < 90 or percent >= 80:
